@@ -10,3 +10,9 @@ snapshots/
 fp-info-cache
 *.dsn
 *.ses
+
+# CAD・作図ツールのバックアップ/一時ファイル
+~$*
+.$*.bkp
+*.FCBak
+*.FCStd1

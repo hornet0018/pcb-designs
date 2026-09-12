@@ -1,0 +1,50 @@
+* 2N7002 Bidirectional Level Shifter Simulation
+* 3.3V <-> 5V for SPI CS signal
+
+* Power supplies
+V3V3 N3V3 0 DC 3.3
+V5V  N5V  0 DC 5.0
+
+* Pull-up resistors
+R1 N3V3 LV 4.7k
+R2 N5V  HV 4.7k
+
+* 2N7002 MOSFET
+* Gate tied to 3.3V, Source to LV (3.3V side), Drain to HV (5V side)
+M1 HV LV N3V3 N3V3 2N7002
+
+* 2N7002 SPICE model (VDMOS)
+.model 2N7002 VDMOS(Rg=3 Vto=1.6 Rd=0 Rs=.3 Rb=.2 Kp=1.2 Lambda=.02 Cgdmax=80p Cgdmin=12p Cgs=45p Cjo=45p Is=.04p)
+
+* Control switches for bidirectional test
+* S1: Connect LV to low driver during 0-2us (3.3V -> 5V direction test)
+* S2: Connect HV to low driver during 4-6us (5V -> 3.3V direction test)
+S1 LV LV_DRV VCTRL1 0 SW_MODEL
+S2 HV HV_DRV VCTRL2 0 SW_MODEL
+
+.model SW_MODEL SW(Ron=10m Roff=1G Vt=2.5 Vh=0.2)
+
+* Low-side driver (ESP32 output simulation)
+V_LV_DRV LV_DRV 0 DC 0
+
+* High-side driver (MCP23S17 output simulation)
+V_HV_DRV HV_DRV 0 DC 0
+
+* Control signals for switches
+* First 2us: test 3.3V -> 5V (LV low, HV should follow)
+* Next 2us: both sides idle (both pulled up)
+* Then 2us: test 5V -> 3.3V (HV low, LV should follow)
+VCTRL1 NCTRL1 0 PWL(0 5 2u 5 2.01u 0 10u 0)
+VCTRL2 NCTRL2 0 PWL(0 0 4u 0 4.01u 5 10u 5)
+
+* Load capacitances (representing trace/input capacitance)
+CLV LV 0 10p
+CHV HV 0 10p
+
+* Transient analysis
+.tran 0.01u 10u
+
+* Plot directives
+.probe V(LV) V(HV) V(NCTRL1) V(NCTRL2)
+
+.end

@@ -1,0 +1,11 @@
+[book]
+title = "YM2151 UNIT ドキュメント"
+authors = ["ConnectCube"]
+description = "YM2151 シールドの設計・運用ドキュメント"
+language = "ja"
+src = "."
+
+[build]
+build-dir = "book"
+
+[output.html]
