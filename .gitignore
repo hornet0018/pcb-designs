@@ -1,0 +1,12 @@
+# KiCad 自動バックアップ・履歴・ロックファイル
+.history/
+*-backups/
+snapshots/
+.mcp-backups/
+~*.lck
+*.lck
+
+# KiCad キャッシュ
+fp-info-cache
+*.dsn
+*.ses
